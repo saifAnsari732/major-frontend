@@ -1,4 +1,19 @@
 /* ===========================
+   HIDE SCROLLBAR GLOBALLY
+   =========================== */
+
+html, body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ===========================
    ANIMATIONS
    =========================== */
 
@@ -71,6 +86,12 @@
     radial-gradient(ellipse at 80% 50%, rgba(50, 100, 91, 0.4) 0%, transparent 50%),
     var(--bg-dark);
   margin-top: 70px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hero::-webkit-scrollbar {
+  display: none;
 }
 
 /* ===========================
