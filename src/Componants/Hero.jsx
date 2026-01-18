@@ -1,7 +1,10 @@
 import '../styles/Hero.css';
+import Navbar from './Navbar';
 
 export default function Hero() {
   return (
+    <> 
+    <Navbar/>
     <section className="hero">
       {/* Background Elements */}
       <div className="hero-background">
@@ -30,5 +33,6 @@ export default function Hero() {
         </div>
       </div>
     </section>
+    </>
   );
 }

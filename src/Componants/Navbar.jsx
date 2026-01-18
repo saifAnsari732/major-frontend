@@ -1,16 +1,16 @@
 // import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Navbar.css';
 import ButtomNav from './ButtomNav';
-
 export default function Navbar() {
-//   const [isMenuOpen, setIsMenuOpen] = useState(false);
+const navigate=useNavigate();
 
   return (
     <>
       <nav className="navbar">
         <div className="navbar-container">
           <div className="navbar-logo">
-            <img src="/dubli-2.png" alt="SAVS FRIEND" className="logo-img" />
+            <img src="/l.png" alt="SAVS FRIEND" className="logo-img" />
           </div>
 
           {/* <ul className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
@@ -20,7 +20,7 @@ export default function Navbar() {
           </ul> */}
 
           <div className="navbar-right">
-            <button className="signin-btn">SIGN IN</button>
+            <button onClick={()=>navigate('/signup')} className="signin-btn">SIGN IN</button>
             {/* <button className="signup-btn">SIGN UP</button> */}
           </div>
         </div>
