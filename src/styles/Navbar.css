@@ -253,7 +253,7 @@
   left: 0;
   right: 0;
   height: 70px;
-  background: rgba(1, 14, 11, 0.95);
+  background: rgba(131, 110, 162, 0.5);
   backdrop-filter: blur(10px);
   border-radius: 25px 25px 0px 0px;
   z-index: 999;
