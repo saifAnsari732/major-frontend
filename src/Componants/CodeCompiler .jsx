@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Play, Copy, Trash2, Code2, Download, Terminal, Sparkles } from 'lucide-react';
 import './CodeCompiler.css';
 import axios from 'axios';
+import ButtomNav from './ButtomNav';
 
 const CodeCompiler = () => {
    const [language, setLanguage] = useState('python');
@@ -227,6 +228,7 @@ int main() {
 
        
       </div>
+      <ButtomNav/>
     </div>
   );
 };
