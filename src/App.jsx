@@ -6,6 +6,8 @@ import Signup from './Componants/Auth/Signup';
 import SignIn from './Componants/Auth/SignIn';
 import Profile from './Componants/ButtomNavbar/Profile';
 import CodeCompiler from './Componants/CodeCompiler ';
+import Footer from './Componants/Footer';
+import BranchListing from './Componants/All-course.jsx/BranchListing.jsxBranchListing';
 
 function App() {
   return (
@@ -17,7 +19,9 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/codecompiler" element={<CodeCompiler />} />
-
+          <Route path="/footer" element={<Footer />} />
+          <Route path="/branch" element={<BranchListing />} />
+     
         </Routes>
       </BrowserRouter>
     </>

@@ -1,4 +1,6 @@
 import '../styles/Hero.css';
+import CategoryCard from './All-course.jsx/CategoryCard ';
+import Footer from './Footer';
 import Navbar from './Navbar';
 
 export default function Hero() {
@@ -33,6 +35,11 @@ export default function Hero() {
         </div>
       </div>
     </section>
+      <CategoryCard/>
+
+
+    
+      <Footer/>
     </>
   );
 }

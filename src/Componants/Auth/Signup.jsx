@@ -201,10 +201,10 @@ export default function Signup() {
 
           {/* Confirm Password Field */}
           <div className="form-group">
-            <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="form-label">Phone Number</label>
             <div className="password-wrapper">
               <input
-                type={showConfirmPassword ? 'text' : 'password'}
+                type='text' 
                 id="confirmPassword"
                 name="confirmPassword"
                 placeholder="Confirm your password"
@@ -222,7 +222,7 @@ export default function Signup() {
                 disabled={isLoading}
                 aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
               >
-                {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                {/* {showConfirmPassword ? '👁️' : '👁️‍🗨️'} */}
               </button>
             </div>
             {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}

@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
 import './SignIn.css';
 import { Link } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function SignIn() {
+  // toast success function
+  const notify = () => toast.success('Sign in successful! Welcome back.')
+
+
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -66,9 +72,9 @@ export default function SignIn() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const newErrors = validateForm();
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -81,10 +87,10 @@ export default function SignIn() {
         email: formData.email,
         password: formData.password,
       });
-      
+
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      
+
       // Clear form on success
       setFormData({
         email: '',
@@ -104,9 +110,9 @@ export default function SignIn() {
       <div className="signin-card">
         {/* Logo Section */}
         <div className="signin-logo-section">
-          <img 
-            src="/l1.png" 
-            alt="SAVS FRIEND Logo" 
+          <img
+            src="/l1.png"
+            alt="SAVS FRIEND Logo"
             className="signin-logo"
             loading="lazy"
             decoding="async"
@@ -172,12 +178,20 @@ export default function SignIn() {
 
           {/* Submit Button */}
           <button
+            onClick={notify}
             type="submit"
             className="submit-btn"
             disabled={isLoading}
           >
             {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
+          <Toaster
+
+            position="top-right"
+            reverseOrder={false}
+
+          />
+
         </form>
 
         {/* Footer Links */}
@@ -191,8 +205,8 @@ export default function SignIn() {
           </p>
           <p className="terms-text">
             By signing in, you agree to our{' '}
-            <a  className="footer-link">Terms of Service</a> and{' '}
-            <a  className="footer-link">Privacy Policy</a>
+            <a className="footer-link">Terms of Service</a> and{' '}
+            <a className="footer-link">Privacy Policy</a>
           </p>
         </div>
       </div>
