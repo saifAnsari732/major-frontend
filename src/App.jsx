@@ -8,7 +8,7 @@ import SignIn from './Componants/Auth/SignIn';
 import Profile from './Componants/ButtomNavbar/Profile';
 import CodeCompiler from './Componants/CodeCompiler ';
 import Footer from './Componants/Footer';
-import BranchListing from './Componants/All-course.jsx/BranchListing.jsxBranchListing';
+import BranchListing from './Componants/All-course/BranchListing.jsxBranchListing';
 
 function App() {
   return (

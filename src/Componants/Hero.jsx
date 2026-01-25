@@ -1,5 +1,5 @@
 import '../styles/Hero.css';
-import CategoryCard from './All-course.jsx/CategoryCard ';
+import CategoryCard from './All-course/CategoryCard ';
 import Footer from './Footer';
 import Navbar from './Navbar';
 export default function Hero() {
