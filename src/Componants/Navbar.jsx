@@ -49,11 +49,10 @@ export default function Navbar() {
             <button onClick={() => navigate('/signin')} className="signin-btns">
               SIGN IN
             </button>
-            <AI/>
           </div>
         </div>
       </nav>
-
+      <AI/>
     </>
   );
 }

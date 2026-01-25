@@ -1,5 +1,6 @@
 import '../styles/Hero.css';
 import CategoryCard from './All-course/CategoryCard';
+import ButtomNav from './ButtomNav';
 import Footer from './Footer';
 import Navbar from './Navbar';
 export default function Hero() {
@@ -33,6 +34,7 @@ export default function Hero() {
           <button className="cta-button cta-secondary">QUICK START</button>
         </div>
       </div>
+      <ButtomNav/>
     </section>
       <CategoryCard/>
       <Footer/>
