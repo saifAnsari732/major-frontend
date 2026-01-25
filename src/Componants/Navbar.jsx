@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Navbar.css';
-import ButtomNav from './ButtomNav';
+import AI from './Ai_Code/AI';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -46,14 +46,14 @@ export default function Navbar() {
           </ul>
 
           <div className="navbar-right">
-            <button onClick={() => navigate('/signin')} className="signin-btn">
+            <button onClick={() => navigate('/signin')} className="signin-btns">
               SIGN IN
             </button>
+            <AI/>
           </div>
         </div>
       </nav>
 
-      <ButtomNav />
     </>
   );
 }

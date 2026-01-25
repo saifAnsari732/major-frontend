@@ -2,11 +2,10 @@ import '../styles/Hero.css';
 import CategoryCard from './All-course.jsx/CategoryCard ';
 import Footer from './Footer';
 import Navbar from './Navbar';
-
 export default function Hero() {
   return (
     <> 
-    <Navbar/>
+ <Navbar/>
     <section className="hero">
       {/* Background Elements */}
       <div className="hero-background">
@@ -36,9 +35,6 @@ export default function Hero() {
       </div>
     </section>
       <CategoryCard/>
-
-
-    
       <Footer/>
     </>
   );

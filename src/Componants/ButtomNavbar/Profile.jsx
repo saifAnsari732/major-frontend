@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Profile.css';
 import ButtomNav from '../ButtomNav';
+import Navbar from '../Navbar';
 
 const Profile = () => {
   // Sample user data - can be replaced with actual user data

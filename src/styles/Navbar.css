@@ -134,7 +134,7 @@
   color: var(--color-accent);
 }
 
-.signin-btn {
+.signin-btns {
   padding: 0.6rem 1.5rem;
   background: transparent;
   border: 2px solid var(--color-border);

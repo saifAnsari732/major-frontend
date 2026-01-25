@@ -1,5 +1,8 @@
 import React from 'react';
 import './BranchListing.css';
+import ButtomNav from '../ButtomNav';
+import Navbar from '../Navbar';
+
 
 const BranchListing = () => {
   // Branch data with course codes
@@ -150,7 +153,7 @@ const BranchListing = () => {
         <div className="header-content">
           <div className="header-title">
             <h1 className="main-title">
-              <span className="title-icon">📚</span>
+              <span className="title-icon"></span>
               Branch by Course
             </h1>
             <p className="subtitle">Manage and access all course papers by branch</p>
@@ -245,6 +248,7 @@ const BranchListing = () => {
           </div>
         </div>
       </footer>
+      <ButtomNav/>
     </div>
   );
 };

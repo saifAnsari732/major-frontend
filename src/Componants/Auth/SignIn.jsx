@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './SignIn.css';
 import { Link } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
+import Navbar from '../Navbar';
 
 export default function SignIn() {
   // toast success function
@@ -107,6 +108,7 @@ export default function SignIn() {
 
   return (
     <div className="signin-container">
+      <Navbar/>
       <div className="signin-card">
         {/* Logo Section */}
         <div className="signin-logo-section">
