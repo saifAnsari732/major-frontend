@@ -203,7 +203,7 @@ const Bca = () => {
                       <p className="branch-code">Paper Code: {branch.code}</p>
                     </div>
                   </div>
-{/* guygrgregre */}
+                  {/* guygrgregre */}
                   {/* Action Buttons */}
                   <div className="action-buttons">
                     <button 
