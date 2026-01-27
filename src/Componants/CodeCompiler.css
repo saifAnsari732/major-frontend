@@ -95,6 +95,7 @@ body {
   min-height: 100vh;
   background: linear-gradient(135deg, var(--color-slate-950), var(--color-slate-900), var(--color-slate-950));
   position: relative;
+  margin-top: 1.8rem;
 }
 
 /* Animated Background */
@@ -327,6 +328,7 @@ body {
 .editor-section {
   width: 100%;
   padding: 0 1rem 1.5rem;
+   /* display: flex; */
 }
 
 .editor-container {
@@ -348,6 +350,8 @@ body {
   background: rgba(15, 23, 42, 0.9);
   border-bottom: 1px solid rgba(100, 116, 139, 0.5);
   padding: 0.75rem;
+
+
 }
 
 .toolbar-content {
@@ -357,20 +361,24 @@ body {
 }
 
 .action-buttons {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
+   display: flex !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
 }
 
+
+
 .action-button {
-  flex-shrink: 0;
+  white-space: nowrap !important;
+  /* flex-shrink: 0; */
   padding: 0.5rem 0.75rem;
   background: rgba(51, 65, 85, 0.5);
   border-radius: var(--border-radius-lg);
   transition: all var(--transition-normal);
   display: flex;
-  align-items: center;
+  /* flex-direction: row; */
+  /* align-items: center; */
+  /* justify-content: space-between; */
   gap: 0.5rem;
   border: 1px solid rgba(100, 116, 139, 0.3);
   color: var(--color-slate-300);
@@ -777,6 +785,7 @@ body {
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
   }
+
 }
 
 /* Animations */

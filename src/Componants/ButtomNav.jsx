@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
 import '../styles/Navbar.css';
 import { useNavigate } from 'react-router-dom';
@@ -5,7 +6,7 @@ import { IoIosHome } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import { FaCode } from "react-icons/fa";
-
+import { FaCalculator } from "react-icons/fa6";
 const ButtomNav = () => {
   const navigate=useNavigate();
   const [activeNav, setActiveNav] = useState('books');
@@ -39,13 +40,10 @@ const ButtomNav = () => {
 
         <button 
           className={`nav-item ${activeNav === 'saved' ? 'active' : ''}`}
-          onClick={() => setActiveNav('saved')}
+          onClick={() => navigate('/calculater')}
           aria-label="Saved"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-            <polyline points="17 21 17 13 7 13 7 21"></polyline>
-          </svg>
+          <FaCalculator />
         </button>
 
         <button 

@@ -62,8 +62,10 @@
 }
 
 .header-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  width: 100%;
+  /* flex-direction: row; */
+  /* grid-template-columns: repeat(auto-fit, minmax(600px, 1fr)); */
   gap: 1.5rem;
   margin-top: 2.5rem;
 }
@@ -253,12 +255,13 @@
 /* Buttons */
 .action-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   gap: 0.75rem;
   margin-top: auto;
 }
 
 .btn {
+  width: 100%;
   padding: 0.6rem;
   border-radius: 8px;
   font-weight: 600;

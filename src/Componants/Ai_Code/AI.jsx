@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './ChatWidget.css'; // Create this CSS file
-
+import axios from 'axios';
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, text: "Hi there! 👋", sender: "bot" },
     { id: 2, text: "Start a chat. We're here to help you 24/7.", sender: "bot" },
-    { id: 3, text: "My name is Nathan. How can I assist you today?", sender: "bot" }
+    { id: 3, text: "My name is SAVS Bot. How can I assist you today?", sender: "bot" }
   ]);
   const [inputText, setInputText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const chatBoxRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -16,28 +17,60 @@ const ChatWidget = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleSendMessage = (e) => {
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (inputText.trim() === '') return;
 
-    // Add user message
+    const userMessage = inputText.trim();
+    
+    // Add user message immediately
     setMessages(prev => [...prev, {
       id: prev.length + 1,
-      text: inputText,
-      sender: 'user'
+      text: userMessage,
+      sender: 'user',
+      timestamp: new Date().toISOString()
     }]);
 
     // Clear input
     setInputText('');
+    setIsLoading(true);
 
-    // Simulate bot response after delay
-    // setTimeout(() => {
-    //   setMessages(prev => [...prev, {
-    //     id: prev.length + 1,
-    //     text: "Thanks for your message! I'm here to help. Is there anything specific you'd like to know?",
-    //     sender: 'bot'
-    //   }]);
-    // }, 1000);
+    try {
+      // Send message to your API
+      const response = await axios.post('http://localhost:8000/gemini', {
+        message: userMessage
+      });
+      //  console.log(response.data.answer);
+
+      const data = response.data;
+      
+      // Add bot response
+      setMessages(prev => [...prev, {
+        id: prev.length + 1,
+        text: data.answer || "I received your message!",
+        sender: 'bot',
+        timestamp: new Date().toISOString()
+      }]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      
+      // Add error message
+      setMessages(prev => [...prev, {
+        id: prev.length + 1,
+        text: "Sorry, I'm having trouble connecting to the server. Please try again later.",
+        sender: 'bot',
+        timestamp: new Date().toISOString()
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -46,27 +79,11 @@ const ChatWidget = () => {
     }
   };
 
-  // Close chat when clicking outside
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (chatBoxRef.current && !chatBoxRef.current.contains(event.target)) {
-  //       const chatButton = document.getElementById('chat-button');
-  //       if (chatButton && !chatButton.contains(event.target)) {
-  //         setIsOpen(false);
-  //       }
-  //     }
-  //   };
-
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside);
-  //   };
-  // }, []);
-
-  // Scroll to bottom when messages change
-  // useEffect(() => {
-  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  // }, [messages]);
+  // Function to format time
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
   return (
     <div className="chat-widget-container">
@@ -75,14 +92,10 @@ const ChatWidget = () => {
         <div ref={chatBoxRef} className="chat-popup">
           {/* Header */}
           <div className="chat-header">
-            <div className="header-content">
-              <div className="avatar-wrapper">
-                <div className="avatar">N</div>
-                <div className="status-indicator"></div>
-              </div>
-              <div className="header-text">
-                <h2>Nathan <span className="verified-badge">✓</span></h2>
+                <h2 className='text-cyan-500  '>SAVS Bot</h2>
                 <p className="status-text">Online • 24/7 Support</p>
+            <div className="header-content">
+              <div className="header-text">
               </div>
             </div>
             <button 
@@ -100,7 +113,7 @@ const ChatWidget = () => {
           <div className="chat-body">
             <div className="welcome-bubble">
               <div className="welcome-text">
-                <span className="welcome-emoji">👋</span> Hi there!
+                 Hi there!
               </div>
               <p className="welcome-subtext">Start a chat. We're here to help you 24/7.</p>
             </div>
@@ -113,7 +126,7 @@ const ChatWidget = () => {
                 >
                   {message.sender === 'bot' && (
                     <div className="bot-avatar">
-                      <span>N</span>
+                      <span>S</span>
                     </div>
                   )}
                   <div
@@ -121,11 +134,28 @@ const ChatWidget = () => {
                   >
                     <p className="message-text">{message.text}</p>
                     <span className="message-time">
-                      {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {message.timestamp ? formatTime(message.timestamp) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                 </div>
               ))}
+              
+              {/* Loading indicator */}
+              {isLoading && (
+                <div className="message-wrapper bot-message-wrapper">
+                  <div className="bot-avatar">
+                    <span>N</span>
+                  </div>
+                  <div className="message-bubble bot-message">
+                    <div className="typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div ref={messagesEndRef} className="messages-end" />
             </div>
           </div>
@@ -142,12 +172,17 @@ const ChatWidget = () => {
                   placeholder="Type your message..."
                   className="message-input"
                   autoFocus
+                  disabled={isLoading}
                 />
                 <div className="input-icons">
-                  <button type="button" className="icon-button emoji-button">
+                  <button type="button" className="icon-button emoji-button" disabled={isLoading}>
                     <span>😊</span>
                   </button>
-                  <button type="button" className="icon-button attach-button">
+                  <button
+                    type="button"
+                    className="icon-button attach-button"
+                    disabled={isLoading}
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/>
                     </svg>
@@ -156,8 +191,8 @@ const ChatWidget = () => {
               </div>
               <button
                 type="submit"
-                disabled={!inputText.trim()}
-                className={`send-button ${inputText.trim() ? 'active' : ''}`}
+                disabled={!inputText.trim() || isLoading}
+                className={`send-button ${inputText.trim() && !isLoading ? 'active' : ''}`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>

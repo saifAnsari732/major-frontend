@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 import React from 'react';
-import './BranchListing.css';
+import './Btch_branch.css';
 import ButtomNav from '../ButtomNav';
 import Navbar from '../Navbar';
 
 
-const BranchListing = () => {
+const Bca = () => {
   // Branch data with course codes
   const branches = [
     {
@@ -141,10 +142,6 @@ const BranchListing = () => {
     alert(`Opening ${branch.name} papers...`);
   };
 
-  const handleViewSolved = (branch) => {
-    console.log('Viewing solved papers for:', branch.name);
-    alert(`Showing solved papers for ${branch.name}...`);
-  };
 
   return (
     <div className="branch-dashboard">
@@ -206,7 +203,7 @@ const BranchListing = () => {
                       <p className="branch-code">Paper Code: {branch.code}</p>
                     </div>
                   </div>
-
+{/* guygrgregre */}
                   {/* Action Buttons */}
                   <div className="action-buttons">
                     <button 
@@ -253,4 +250,4 @@ const BranchListing = () => {
   );
 };
 
-export default BranchListing;
+export default Bca;

@@ -8,7 +8,8 @@ import SignIn from './Componants/Auth/SignIn';
 import Profile from './Componants/ButtomNavbar/Profile';
 import CodeCompiler from './Componants/CodeCompiler ';
 import Footer from './Componants/Footer';
-import BranchListing from './Componants/All-course/BranchListing.jsxBranchListing';
+import BranchListing from './Componants/All-course/Btech_branch';
+import Calculator from './Componants/Calculater/calkulator';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/codecompiler" element={<CodeCompiler />} />
           <Route path="/footer" element={<Footer />} />
           <Route path="/branch" element={<BranchListing />} />
+          <Route path="/calculater" element={<Calculator />} />
           
         </Routes>
       </BrowserRouter>

@@ -57,7 +57,9 @@ int main() {
     try {
       const response = await axios.post('http://localhost:8000/compile', { code, language, input });
       setOutput(response.data.output);
-      setError(response.data.error);
+      if (response.data.error){
+        setOutput(response.data.error);
+      }
     } catch (err) {
       setError('Error running code: ' + err.message);
     }
@@ -97,13 +99,13 @@ int main() {
         <div className="header-section">
           <div className="header-container">
             <div className="header-content">
-              <Code2 className="header-icon header-icon-left" />
+              {/* <Code2 className="header-icon header-icon-left" /> */}
               <h1 className="main-title">SAVS Code Compiler </h1>
-              <Sparkles className="header-icon header-icon-right" />
+              {/* <Sparkles className="header-icon header-icon-right" /> */}
             </div>
-            <p className="subtitle">
+            {/* <p className="subtitle">
               Write, compile, and execute code in real-time
-            </p>
+            </p> */}
           </div>
         </div>
 
@@ -138,9 +140,9 @@ int main() {
                   <div className="action-buttons">
                     <button
                       onClick={copyCode}
-                      className="action-button"
+                      className="action-button "
                     >
-                      <Copy className="button-icon" />
+                      <Copy className="button-icon text-amber-200" />
                       <span className="button-text">Copy</span>
                     </button>
                     <button
