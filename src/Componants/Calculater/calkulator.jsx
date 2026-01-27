@@ -10,120 +10,25 @@ const Calculator = () => {
   const [history, setHistory] = useState([]);
   const [angleMode, setAngleMode] = useState('DEG'); // DEG, RAD, GRAD
 
-  // Enhanced trigonometric functions with angle mode support
-  const trigFuncs = {
-    sin: (x) => {
-      const angle = convertAngle(x, angleMode);
-      return Math.sin(angle);
-    },
-    cos: (x) => {
-      const angle = convertAngle(x, angleMode);
-      return Math.cos(angle);
-    },
-    tan: (x) => {
-      const angle = convertAngle(x, angleMode);
-      return Math.tan(angle);
-    },
-    asin: (x) => {
-      const result = Math.asin(x);
-      return convertFromRadians(result, angleMode);
-    },
-    acos: (x) => {
-      const result = Math.acos(x);
-      return convertFromRadians(result, angleMode);
-    },
-    atan: (x) => {
-      const result = Math.atan(x);
-      return convertFromRadians(result, angleMode);
-    }
-  };
-
-  const convertAngle = (angle, mode) => {
-    switch(mode) {
-      case 'DEG': return angle * Math.PI / 180;
-      case 'GRAD': return angle * Math.PI / 200;
-      case 'RAD': return angle;
-      default: return angle;
-    }
-  };
-
-  const convertFromRadians = (radians, mode) => {
-    switch(mode) {
-      case 'DEG': return radians * 180 / Math.PI;
-      case 'GRAD': return radians * 200 / Math.PI;
-      case 'RAD': return radians;
-      default: return radians;
-    }
-  };
-
   // Handle button press
   const handleButtonPress = (value) => {
     if (value === 'SHIFT') {
       setIsShift(!isShift);
-      setIsAlpha(false); // SHIFT and ALPHA are mutually exclusive
       return;
     }
     
     if (value === 'ALPHA') {
       setIsAlpha(!isAlpha);
-      setIsShift(false); // SHIFT and ALPHA are mutually exclusive
       return;
     }
 
-    // Handle shift-modified buttons
-    let actualValue = value;
-    if (isShift) {
-      const shiftMap = {
-        'sin(': 'asin(',
-        'cos(': 'acos(',
-        'tan(': 'atan(',
-        'log(': '10**', // Inverse log
-        'ln(': 'e**',   // Inverse ln
-        '√(': '³√(',   // Cube root
-        '²': 'x^y',    // Power
-        '³': 'y√x',    // Nth root
-        '!': 'nPr',    // Permutation
-        'nPr': 'nCr',  // Combination
-        'Pol(': 'Rec(', // Polar to rectangular
-        'Rec(': 'Pol(', // Rectangular to polar
-        '(-)': '±',    // Plus-minus
-        'π': 'τ',      // Tau (2π)
-        'Ans': 'PreAns', // Previous answer
-        'Rnd': 'Fix',  // Fix decimal
-        'Ran#': 'RanInt', // Random integer
-      };
-      actualValue = shiftMap[value] || value;
-    }
-
-    // Handle alpha-modified buttons (if needed)
-    if (isAlpha) {
-      const alphaMap = {
-        'A': 'A',
-        'B': 'B',
-        'C': 'C',
-        // Add more alpha characters as needed
-      };
-      actualValue = alphaMap[value] || value;
-    }
-
-    if (actualValue === 'DRG>') {
-      // Cycle through angle modes
-      const modes = ['DEG', 'RAD', 'GRAD'];
-      const currentIndex = modes.indexOf(angleMode);
-      const nextIndex = (currentIndex + 1) % modes.length;
-      setAngleMode(modes[nextIndex]);
-      setDisplay(modes[nextIndex]);
-      setTimeout(() => setDisplay('0'), 1000);
-      return;
-    }
-
-    if (actualValue === 'AC') {
+    if (value === 'AC') {
       setDisplay('0');
       setExpression('');
       return;
     }
 
-    if (actualValue === 'DEL') {
+    if (value === 'DEL') {
       if (display.length === 1) {
         setDisplay('0');
       } else {
@@ -132,56 +37,32 @@ const Calculator = () => {
       return;
     }
 
-    if (actualValue === '=') {
+    if (value === '=') {
       try {
         // Replace display symbols with actual operators
         let calcExpression = display
           .replace(/×/g, '*')
           .replace(/÷/g, '/')
           .replace(/π/g, Math.PI.toString())
-          .replace(/τ/g, (2 * Math.PI).toString())
-          .replace(/mod/gi, '%')
-          .replace(/³√\(/g, 'Math.cbrt(')
-          .replace(/√\(/g, 'Math.sqrt(')
+          .replace(/e/g, Math.E.toString())
+          .replace(/√\(/g, 'sqrt(')
           .replace(/√/g, 'Math.sqrt(')
-          .replace(/sin\(/g, 'trigFuncs.sin(')
-          .replace(/cos\(/g, 'trigFuncs.cos(')
-          .replace(/tan\(/g, 'trigFuncs.tan(')
-          .replace(/asin\(/g, 'trigFuncs.asin(')
-          .replace(/acos\(/g, 'trigFuncs.acos(')
-          .replace(/atan\(/g, 'trigFuncs.atan(')
+          .replace(/sin\(/g, 'Math.sin(')
+          .replace(/cos\(/g, 'Math.cos(')
+          .replace(/tan\(/g, 'Math.tan(')
+          .replace(/sin⁻¹\(/g, 'asin(')
+          .replace(/cos⁻¹\(/g, 'acos(')
+          .replace(/tan⁻¹\(/g, 'atan(')
           .replace(/log\(/g, 'Math.log10(')
           .replace(/ln\(/g, 'Math.log(')
-          .replace(/abs\(/g, 'Math.abs(')
-          .replace(/Ans/g, display)
-          .replace(/\^/g, '**')
-          .replace(/x\^y/g, '**')
-          .replace(/y√x/g, 'Math.pow(x, 1/y)');
+          .replace(/mod/g, '%')
+          .replace(/Ans/g, expression)
+          .replace(/x⁻¹/g, '**(-1)')
+          .replace(/x²/g, '**2')
+          .replace(/x³/g, '**3');
 
-        // Handle factorial
-        if (calcExpression.includes('!')) {
-          calcExpression = calcExpression.replace(/(\d+)!/g, (match, num) => {
-            let n = parseInt(num);
-            let result = 1;
-            for (let i = 2; i <= n; i++) {
-              result *= i;
-            }
-            return result.toString();
-          });
-        }
-
-        // Handle MOD operation
-        if (calcExpression.toLowerCase().includes('mod')) {
-          const parts = calcExpression.split(/mod/i);
-          if (parts.length === 2) {
-            const a = eval(parts[0]);
-            const b = eval(parts[1]);
-            calcExpression = `(${a} % ${b})`;
-          }
-        }
-
-        // Handle power operations
-        calcExpression = calcExpression.replace(/(\d+)\*\*(\d+)/g, 'Math.pow($1, $2)');
+        // Handle trigonometric functions with angle mode conversion
+        calcExpression = convertTrigExpressions(calcExpression);
 
         // Close any open parentheses
         const openParens = (calcExpression.match(/\(/g) || []).length;
@@ -190,18 +71,29 @@ const Calculator = () => {
           calcExpression += ')'.repeat(openParens - closeParens);
         }
 
+        // Handle factorial
+        calcExpression = calcExpression.replace(/(\d+(\.\d+)?)!/g, (match, num) => {
+          return `factorial(${num})`;
+        });
+
+        // Handle rank (nPr) and combination (nCr)
+        calcExpression = calcExpression.replace(/(\d+)nPr(\d+)/g, (match, n, r) => {
+          return `permutation(${n}, ${r})`;
+        });
+        
+        calcExpression = calcExpression.replace(/(\d+)nCr(\d+)/g, (match, n, r) => {
+          return `combination(${n}, ${r})`;
+        });
+
         // Evaluate the expression
-        const result = eval(calcExpression);
+        const result = evaluateExpression(calcExpression);
         const roundedResult = Math.round(result * 100000000) / 100000000;
         
         // Add to history
         setHistory(prev => [...prev.slice(-4), `${display} = ${roundedResult}`]);
         
         setDisplay(roundedResult.toString());
-        setExpression(display);
-        
-        // Auto turn off shift after calculation
-        setIsShift(false);
+        setExpression(roundedResult.toString());
       } catch (error) {
         console.log(error);
         setDisplay('Error');
@@ -210,32 +102,34 @@ const Calculator = () => {
       return;
     }
 
-    if (actualValue === 'M+') {
-      setMemory(memory + parseFloat(display) || 0);
+    if (value === 'M+') {
+      const currentValue = parseFloat(display) || 0;
+      setMemory(memory + currentValue);
       return;
     }
 
-    if (actualValue === 'M-') {
-      setMemory(memory - parseFloat(display) || 0);
+    if (value === 'M-') {
+      const currentValue = parseFloat(display) || 0;
+      setMemory(memory - currentValue);
       return;
     }
 
-    if (actualValue === 'MR') {
+    if (value === 'MR') {
       setDisplay(memory.toString());
       return;
     }
 
-    if (actualValue === 'MC') {
+    if (value === 'MC') {
       setMemory(0);
       return;
     }
 
-    if (actualValue === 'Ans') {
+    if (value === 'Ans') {
       setDisplay(expression);
       return;
     }
 
-    if (actualValue === '(-)') {
+    if (value === '(-)') {
       if (display.startsWith('-')) {
         setDisplay(display.slice(1));
       } else {
@@ -244,274 +138,556 @@ const Calculator = () => {
       return;
     }
 
-    if (actualValue === '±') {
-      setDisplay('±' + display);
-      return;
-    }
-
-    // Handle MOD button
-    if (actualValue === 'mod') {
+    if (value === 'MOD') {
       setDisplay(display === '0' ? 'mod' : display + 'mod');
       return;
     }
 
-    // Handle parentheses
-    if (actualValue === '(' || actualValue === ')') {
-      setDisplay(display === '0' ? actualValue : display + actualValue);
+    if (value === 'RANK') {
+      setDisplay(display === '0' ? '' : display + 'nPr');
       return;
     }
 
-    // Handle special functions that need parentheses
-    const functionsNeedingParentheses = [
-      'sin(', 'cos(', 'tan(', 'asin(', 'acos(', 'atan(', 
-      'log(', 'ln(', 'abs(', 'Pol(', 'Rec(', 'Math.round(',
-      'Math.exp(', 'Math.sqrt(', 'Math.cbrt('
-    ];
-    
-    if (functionsNeedingParentheses.includes(actualValue)) {
-      setDisplay(display === '0' ? actualValue : display + actualValue);
+    if (value === 'COMB') {
+      setDisplay(display === '0' ? '' : display + 'nCr');
+      return;
+    }
+
+    // Handle shift-modified trigonometric functions
+    if (value === 'sin⁻¹') {
+      setDisplay(display === '0' ? 'sin⁻¹(' : display + 'sin⁻¹(');
+      return;
+    }
+
+    if (value === 'cos⁻¹') {
+      setDisplay(display === '0' ? 'cos⁻¹(' : display + 'cos⁻¹(');
+      return;
+    }
+
+    if (value === 'tan⁻¹') {
+      setDisplay(display === '0' ? 'tan⁻¹(' : display + 'tan⁻¹(');
+      return;
+    }
+
+    // Handle parentheses
+    if (value === '(' || value === ')') {
+      setDisplay(display === '0' ? value : display + value);
       return;
     }
 
     // Handle numbers and operators
-    if (display === '0' && !isNaN(actualValue) && actualValue !== '0') {
-      setDisplay(actualValue);
+    if (display === '0' && !isNaN(value) && value !== '0') {
+      setDisplay(value);
     } else {
-      setDisplay(display + actualValue);
+      setDisplay(display + value);
     }
   };
 
-  // Enhanced button configuration with shift labels
-  const getButtonConfig = () => {
-    const baseButtons = [
-      // First row
-      { 
-        label: 'SHIFT', 
-        shiftLabel: 'SHIFT',
-        value: 'SHIFT', 
-        className: 'func shift', 
-        color: 'blue' 
-      },
-      { 
-        label: 'ALPHA', 
-        shiftLabel: 'ALPHA',
-        value: 'ALPHA', 
-        className: 'func alpha', 
-        color: 'red' 
-      },
-      { 
-        label: '√', 
-        shiftLabel: '³√',
-        value: '√(', 
-        className: 'func' 
-      },
-      { 
-        label: 'x²', 
-        shiftLabel: 'x^y',
-        value: '²', 
-        className: 'func' 
-      },
-      { 
-        label: 'x³', 
-        shiftLabel: 'y√x',
-        value: '³', 
-        className: 'func' 
-      },
-      { 
-        label: 'log', 
-        shiftLabel: '10^x',
-        value: 'log(', 
-        className: 'func' 
-      },
-      { 
-        label: 'ln', 
-        shiftLabel: 'e^x',
-        value: 'ln(', 
-        className: 'func' 
-      },
-      { 
-        label: 'sin', 
-        shiftLabel: 'sin⁻¹',
-        value: 'sin(', 
-        className: 'func' 
-      },
-      { 
-        label: 'cos', 
-        shiftLabel: 'cos⁻¹',
-        value: 'cos(', 
-        className: 'func' 
-      },
-      { 
-        label: 'tan', 
-        shiftLabel: 'tan⁻¹',
-        value: 'tan(', 
-        className: 'func' 
-      },
-      { 
-        label: '(-)', 
-        shiftLabel: '±',
-        value: '(-)', 
-        className: 'func' 
-      },
-      { 
-        label: 'M+', 
-        shiftLabel: 'M+',
-        value: 'M+', 
-        className: 'func' 
-      },
-      
-      // Second row
-      { 
-        label: 'MODE', 
-        shiftLabel: 'MODE',
-        value: 'MODE', 
-        className: 'func', 
-        disabled: false,
-        action: () => {
-          // Add mode switching logic here
-          setDisplay('MODE MENU');
-          setTimeout(() => setDisplay('0'), 1000);
-        }
-      },
-      { 
-        label: 'SETUP', 
-        shiftLabel: 'SETUP',
-        value: 'SETUP', 
-        className: 'func', 
-        disabled: false 
-      },
-      { 
-        label: 'ON', 
-        shiftLabel: 'OFF',
-        value: 'ON', 
-        className: 'func power' 
-      },
-      { 
-        label: 'Abs', 
-        shiftLabel: 'Abs',
-        value: 'abs(', 
-        className: 'func' 
-      },
-      { 
-        label: 'x!', 
-        shiftLabel: 'nPr',
-        value: '!', 
-        className: 'func' 
-      },
-      { 
-        label: 'nPr', 
-        shiftLabel: 'nCr',
-        value: 'nPr', 
-        className: 'func' 
-      },
-      { 
-        label: 'nCr', 
-        shiftLabel: 'nCr',
-        value: 'nCr', 
-        className: 'func',
-        disabled: true 
-      },
-      { 
-        label: 'Pol', 
-        shiftLabel: 'Rec',
-        value: 'Pol(', 
-        className: 'func' 
-      },
-      { 
-        label: 'Rec', 
-        shiftLabel: 'Pol',
-        value: 'Rec(', 
-        className: 'func' 
-      },
-      { 
-        label: '%', 
-        shiftLabel: '%',
-        value: '%', 
-        className: 'func' 
-      },
-      { 
-        label: 'RCL', 
-        shiftLabel: 'ENG',
-        value: 'MR', 
-        className: 'func' 
-      },
-      { 
-        label: 'ENG', 
-        shiftLabel: 'ENG',
-        value: 'ENG', 
-        className: 'func', 
-        disabled: true 
-      },
-      
-      // MOD button added
-      { 
-        label: 'mod', 
-        shiftLabel: 'mod',
-        value: 'mod', 
-        className: 'func' 
-      },
-    ];
-
-    // Add more buttons as needed...
-
-    return baseButtons;
+  // Helper functions for mathematical operations
+  const factorial = (n) => {
+    if (n < 0) throw new Error('Factorial of negative number');
+    if (n === 0 || n === 1) return 1;
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+      result *= i;
+    }
+    return result;
   };
+
+  const permutation = (n, r) => {
+    if (n < r) throw new Error('n must be >= r');
+    return factorial(n) / factorial(n - r);
+  };
+
+  const combination = (n, r) => {
+    if (n < r) throw new Error('n must be >= r');
+    return permutation(n, r) / factorial(r);
+  };
+
+  // Convert angle based on current mode
+  const toRadians = (angle) => {
+    switch (angleMode) {
+      case 'DEG':
+        return (angle * Math.PI) / 180;
+      case 'GRAD':
+        return (angle * Math.PI) / 200;
+      case 'RAD':
+      default:
+        return angle;
+    }
+  };
+
+  const fromRadians = (radians) => {
+    switch (angleMode) {
+      case 'DEG':
+        return (radians * 180) / Math.PI;
+      case 'GRAD':
+        return (radians * 200) / Math.PI;
+      case 'RAD':
+      default:
+        return radians;
+    }
+  };
+
+  // Convert trigonometric expressions
+  const convertTrigExpressions = (expr) => {
+    // Convert sin, cos, tan
+    expr = expr.replace(/Math\.sin\(([^)]+)\)/g, (match, angle) => {
+      return `Math.sin(${toRadians(parseFloat(angle))})`;
+    });
+    
+    expr = expr.replace(/Math\.cos\(([^)]+)\)/g, (match, angle) => {
+      return `Math.cos(${toRadians(parseFloat(angle))})`;
+    });
+    
+    expr = expr.replace(/Math\.tan\(([^)]+)\)/g, (match, angle) => {
+      return `Math.tan(${toRadians(parseFloat(angle))})`;
+    });
+
+    // Convert inverse trigonometric functions
+    expr = expr.replace(/asin\(([^)]+)\)/g, (match, value) => {
+      const result = Math.asin(parseFloat(value));
+      return fromRadians(result).toString();
+    });
+    
+    expr = expr.replace(/acos\(([^)]+)\)/g, (match, value) => {
+      const result = Math.acos(parseFloat(value));
+      return fromRadians(result).toString();
+    });
+    
+    expr = expr.replace(/atan\(([^)]+)\)/g, (match, value) => {
+      const result = Math.atan(parseFloat(value));
+      return fromRadians(result).toString();
+    });
+
+    return expr;
+  };
+
+  // Main evaluation function
+  const evaluateExpression = (expr) => {
+    // Define helper functions in scope
+    const factorial = (n) => {
+      n = Math.floor(Math.abs(n));
+      if (n < 0) throw new Error('Factorial of negative number');
+      if (n === 0 || n === 1) return 1;
+      let result = 1;
+      for (let i = 2; i <= n; i++) {
+        result *= i;
+      }
+      return result;
+    };
+
+    const permutation = (n, r) => {
+      n = Math.floor(n);
+      r = Math.floor(r);
+      if (n < r) throw new Error('n must be >= r');
+      return factorial(n) / factorial(n - r);
+    };
+
+    const combination = (n, r) => {
+      n = Math.floor(n);
+      r = Math.floor(r);
+      if (n < r) throw new Error('n must be >= r');
+      return permutation(n, r) / factorial(r);
+    };
+
+    // Evaluate with all functions in scope
+    return Function(
+      '"use strict";' +
+      'const factorial = ' + factorial.toString() + ';' +
+      'const permutation = ' + permutation.toString() + ';' +
+      'const combination = ' + combination.toString() + ';' +
+      'return ' + expr
+    )();
+  };
+
+  // Handle keyboard input
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const key = e.key;
+      
+      // Toggle shift with Shift key
+      if (key === 'Shift') {
+        setIsShift(true);
+      }
+      
+      // Number keys
+      if (key >= '0' && key <= '9') {
+        handleButtonPress(key);
+      }
+      
+      // Operators
+      if (key === '+') handleButtonPress('+');
+      if (key === '-') handleButtonPress('-');
+      if (key === '*') handleButtonPress('×');
+      if (key === '/') handleButtonPress('÷');
+      if (key === '.') handleButtonPress('.');
+      if (key === '%') handleButtonPress('MOD');
+      if (key === 'Enter' || key === '=') handleButtonPress('=');
+      if (key === 'Escape') handleButtonPress('AC');
+      if (key === 'Backspace') handleButtonPress('DEL');
+      if (key === '(') handleButtonPress('(');
+      if (key === ')') handleButtonPress(')');
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.key === 'Shift') {
+        setIsShift(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [display, isShift]);
+
+  // Update button labels based on shift state
+  const getButtonValue = (button) => {
+    if (isShift && button.shiftValue) {
+      return button.shiftValue;
+    }
+    if (isAlpha && button.alphaValue) {
+      return button.alphaValue;
+    }
+    return button.value;
+  };
+
+  const getButtonLabel = (button) => {
+    if (isShift && button.shiftLabel) {
+      return button.shiftLabel;
+    }
+    if (isAlpha && button.alphaLabel) {
+      return button.alphaLabel;
+    }
+    return button.label;
+  };
+
+  // Calculator buttons configuration with shift and alpha alternatives
+  const buttons = [
+    // First row
+    { 
+      label: 'SHIFT', 
+      value: 'SHIFT', 
+      className: 'func shift', 
+      color: 'blue' 
+    },
+    { 
+      label: 'ALPHA', 
+      value: 'ALPHA', 
+      className: 'func alpha', 
+      color: 'red' 
+    },
+    { 
+      label: '√', 
+      shiftLabel: '³√',
+      value: '√(', 
+      shiftValue: '³√(',
+      className: 'func' 
+    },
+    { 
+      label: 'x²', 
+      shiftLabel: 'xʸ',
+      value: '²', 
+      shiftValue: '^',
+      className: 'func' 
+    },
+    { 
+      label: 'x³', 
+      shiftLabel: 'y√x',
+      value: '³', 
+      shiftValue: 'y√',
+      className: 'func' 
+    },
+    { 
+      label: 'log', 
+      shiftLabel: '10ˣ',
+      value: 'log(', 
+      shiftValue: '10**',
+      className: 'func' 
+    },
+    { 
+      label: 'ln', 
+      shiftLabel: 'eˣ',
+      value: 'ln(', 
+      shiftValue: 'Math.exp(',
+      className: 'func' 
+    },
+    { 
+      label: 'sin', 
+      shiftLabel: 'sin⁻¹',
+      value: 'sin(', 
+      shiftValue: 'sin⁻¹',
+      className: 'func' 
+    },
+    { 
+      label: 'cos', 
+      shiftLabel: 'cos⁻¹',
+      value: 'cos(', 
+      shiftValue: 'cos⁻¹',
+      className: 'func' 
+    },
+    { 
+      label: 'tan', 
+      shiftLabel: 'tan⁻¹',
+      value: 'tan(', 
+      shiftValue: 'tan⁻¹',
+      className: 'func' 
+    },
+    { 
+      label: '(-)', 
+      shiftLabel: 'Rnd',
+      value: '(-)', 
+      shiftValue: 'Math.round(',
+      className: 'func' 
+    },
+    { 
+      label: 'M+', 
+      shiftLabel: 'M-',
+      value: 'M+', 
+      shiftValue: 'M-',
+      className: 'func' 
+    },
+    
+    // Second row
+    { 
+      label: 'MODE', 
+      value: 'MODE', 
+      className: 'func', 
+      onClick: () => {
+        const modes = ['DEG', 'RAD', 'GRAD'];
+        const currentIndex = modes.indexOf(angleMode);
+        const nextIndex = (currentIndex + 1) % modes.length;
+        setAngleMode(modes[nextIndex]);
+      }
+    },
+    { 
+      label: 'SETUP', 
+      value: 'SETUP', 
+      className: 'func', 
+      disabled: true 
+    },
+    { 
+      label: 'ON', 
+      value: 'ON', 
+      className: 'func power',
+      onClick: () => {
+        // Reset calculator
+        setDisplay('0');
+        setExpression('');
+        setIsShift(false);
+        setIsAlpha(false);
+      }
+    },
+    { 
+      label: 'Abs', 
+      value: 'Math.abs(', 
+      className: 'func' 
+    },
+    { 
+      label: 'x!', 
+      value: '!', 
+      className: 'func' 
+    },
+    { 
+      label: 'nPr', 
+      shiftLabel: 'nCr',
+      value: 'RANK', 
+      shiftValue: 'COMB',
+      className: 'func' 
+    },
+    { 
+      label: 'nCr', 
+      shiftLabel: 'RANK',
+      value: 'COMB', 
+      shiftValue: 'RANK',
+      className: 'func' 
+    },
+    { 
+      label: 'Pol', 
+      value: 'Pol(', 
+      className: 'func' 
+    },
+    { 
+      label: 'Rec', 
+      value: 'Rec(', 
+      className: 'func' 
+    },
+    { 
+      label: '%', 
+      shiftLabel: 'mod',
+      value: '%', 
+      shiftValue: 'MOD',
+      className: 'func' 
+    },
+    { 
+      label: 'RCL', 
+      value: 'MR', 
+      className: 'func' 
+    },
+    { 
+      label: 'ENG', 
+      value: 'ENG', 
+      className: 'func', 
+      disabled: true 
+    },
+    
+    // Third row
+    { label: '(', value: '(', className: 'normal' },
+    { label: ')', value: ')', className: 'normal' },
+    { label: ',', value: ',', className: 'normal' },
+    { 
+      label: 'S⇔D', 
+      value: 'S⇔D', 
+      className: 'func', 
+      onClick: () => {
+        // Convert between fraction and decimal
+        const num = parseFloat(display);
+        if (!isNaN(num)) {
+          // Simple fraction approximation
+          const tolerance = 1.0E-6;
+          let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
+          let b = num;
+          do {
+            const a = Math.floor(b);
+            let aux = h1;
+            h1 = a * h1 + h2;
+            h2 = aux;
+            aux = k1;
+            k1 = a * k1 + k2;
+            k2 = aux;
+            b = 1 / (b - a);
+          } while (Math.abs(num - h1/k1) > num * tolerance);
+          
+          if (k1 === 1) {
+            setDisplay(num.toString());
+          } else {
+            setDisplay(`${h1}/${k1}`);
+          }
+        }
+      }
+    },
+    { label: 'M-', value: 'M-', className: 'func' },
+    { label: '7', value: '7', className: 'number' },
+    { label: '8', value: '8', className: 'number' },
+    { label: '9', value: '9', className: 'number' },
+    { label: 'DEL', value: 'DEL', className: 'func del' },
+    { label: 'AC', value: 'AC', className: 'func ac' },
+    
+    // Fourth row
+    { label: 'Ran#', value: 'Math.random()', className: 'func' },
+    { label: 'RanInt', value: 'RanInt', className: 'func', disabled: true },
+    { label: 'π', value: 'π', className: 'func' },
+    { label: 'e', value: Math.E.toString(), className: 'func' },
+    { 
+      label: angleMode, 
+      value: 'DRG>', 
+      className: 'func',
+      onClick: () => {
+        const modes = ['DEG', 'RAD', 'GRAD'];
+        const currentIndex = modes.indexOf(angleMode);
+        const nextIndex = (currentIndex + 1) % modes.length;
+        setAngleMode(modes[nextIndex]);
+      }
+    },
+    { label: '4', value: '4', className: 'number' },
+    { label: '5', value: '5', className: 'number' },
+    { label: '6', value: '6', className: 'number' },
+    { label: '×', value: '×', className: 'operator' },
+    { label: '÷', value: '÷', className: 'operator' },
+    
+    // Fifth row
+    { label: 'STAT', value: 'STAT', className: 'func stat', disabled: true },
+    { label: 'Rnd', value: 'Math.round(', className: 'func' },
+    { label: '10^x', value: '10**', className: 'func' },
+    { label: 'e^x', value: 'Math.exp(', className: 'func' },
+    { label: 'Ans', value: 'Ans', className: 'func' },
+    { label: '1', value: '1', className: 'number' },
+    { label: '2', value: '2', className: 'number' },
+    { label: '3', value: '3', className: 'number' },
+    { label: '+', value: '+', className: 'operator' },
+    { label: '-', value: '-', className: 'operator' },
+    
+    // Sixth row
+    { label: 'CLR', value: 'CLR', className: 'func', disabled: true },
+    { label: 'INS', value: 'INS', className: 'func', disabled: true },
+    { label: 'OFF', value: 'OFF', className: 'func', disabled: true },
+    { 
+      label: 'x⁻¹', 
+      value: '**(-1)', 
+      className: 'func' 
+    },
+    { label: 'STO', value: 'MC', className: 'func' },
+    { label: '0', value: '0', className: 'number zero' },
+    { label: '.', value: '.', className: 'number' },
+    { 
+      label: '×10^x', 
+      value: 'e', 
+      className: 'func',
+      onClick: () => {
+        // Scientific notation
+        const num = parseFloat(display);
+        if (!isNaN(num)) {
+          setDisplay(num.toExponential());
+        }
+      }
+    },
+    { label: '=', value: '=', className: 'operator equals' },
+  ];
 
   return (
     <div className="calculator-container">
       <div className="calculator">
         {/* Display */}
         <div className="calculator-display">
-          <div className="status-indicators">
-            <div className="memory-indicator">
-              {memory !== 0 && 'M'}
-            </div>
-            <div className="angle-indicator">
-              {angleMode}
-            </div>
-            <div className="shift-indicator">
-              {isShift && 'S'}
-              {isAlpha && 'A'}
-            </div>
+          <div className="memory-indicator">
+            {memory !== 0 && 'M'}
+          </div>
+          <div className="shift-indicator">
+            {isShift && 'SHIFT'}
+            {isAlpha && 'ALPHA'}
+            <span className="angle-mode"> {angleMode}</span>
           </div>
           <div className="display-text">{display}</div>
         </div>
 
-        {/* History */}
-        <div className="history-display">
-          {history.map((item, idx) => (
-            <div key={idx} className="history-item">{item}</div>
-          ))}
+        {/* Example calculation */}
+        <div className="example-calculation">
+          Try: 5 mod 2 = 1, sin(30) = 0.5, 5 nPr 2 = 20
         </div>
 
         {/* Keyboard */}
         <div className="calculator-keyboard">
-          {getButtonConfig().map((btn, index) => (
+          {buttons.map((btn, index) => (
             <button
               key={index}
-              className={`calculator-btn ${btn.className} ${isShift ? 'shift-active' : ''}`}
+              className={`calculator-btn ${btn.className} ${isShift ? 'shift-active' : ''} ${isAlpha ? 'alpha-active' : ''}`}
               onClick={() => {
-                if (btn.action) {
-                  btn.action();
+                if (btn.onClick) {
+                  btn.onClick();
                 } else {
-                  handleButtonPress(isShift && btn.shiftValue ? btn.shiftValue : btn.value);
+                  handleButtonPress(getButtonValue(btn));
                 }
               }}
               disabled={btn.disabled}
               style={btn.color ? { backgroundColor: btn.color, color: 'white' } : {}}
             >
-              {isShift && btn.shiftLabel ? btn.shiftLabel : btn.label}
+              {getButtonLabel(btn)}
             </button>
           ))}
         </div>
 
-        {/* Footer */}
+        {/* Memory and History */}
         <div className="calculator-footer">
           <div className="memory-display">
-            Memory: {memory.toFixed(6)}
+            Memory: {memory} | Angle Mode: {angleMode}
           </div>
-          <div className="instructions">
-            SHIFT: Alternate functions | ALPHA: Letters | MODE: Settings
+          <div className="history">
+            {history.map((item, idx) => (
+              <div key={idx} className="history-item">{item}</div>
+            ))}
           </div>
         </div>
       </div>
